@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="google-site-verification" content="I0uoQ8VwTYJs06SiSl6ubOkSUcjqbn6gXdX0g0KcKdw" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebTools Pro - All-in-One Web Utilities</title>
@@ -637,18 +636,7 @@
                     <div class="panel">
                         <div class="output-container">
                             <div id="favicon-preview" style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">
-                                <div class="favicon-size">
-                                    <div style="width: 32px; height: 32px; background: #6c5ce7; border-radius: 6px; margin: 0 auto;"></div>
-                                    <p>32x32</p>
-                                </div>
-                                <div class="favicon-size">
-                                    <div style="width: 48px; height: 48px; background: #a29bfe; border-radius: 6px; margin: 0 auto;"></div>
-                                    <p>48x48</p>
-                                </div>
-                                <div class="favicon-size">
-                                    <div style="width: 64px; height: 64px; background: #fd79a8; border-radius: 6px; margin: 0 auto;"></div>
-                                    <p>64x64</p>
-                                </div>
+                                <!-- Preview will be added here -->
                             </div>
                             <div id="favicon-code" style="text-align: left; width: 100%; margin-top: 20px; display: none;">
                                 <label>HTML Code:</label>
@@ -948,6 +936,7 @@
                                 <h4 style="color: var(--secondary); margin-bottom: 10px;">Compressed Image</h4>
                                 <img id="compressor-result" class="preview-image" style="display: none;">
                                 <div id="compressed-size"></div>
+                                <div id="compression-ratio"></div>
                                 <p id="compressor-placeholder">Your compressed image will appear here</p>
                                 <button id="download-compressed" class="download-btn" style="display: none; margin-top: 20px;">
                                     <i class="fas fa-download"></i> Download Compressed Image
@@ -1182,6 +1171,7 @@
         <p>WebTools Pro &copy; 2025 | All tools work entirely in your browser - no data is sent to any server</p>
         <p style="margin-top: 10px; font-size: 0.9rem;">Created with Love By Anik</p>
     </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
 
     <script>
         // Create animated particles
@@ -1427,51 +1417,306 @@
             showNotification('Sitemap downloaded!');
         });
         
-        // Favicon Generator
-        const faviconInput = document.getElementById('favicon-input');
-        const generateFaviconBtn = document.getElementById('generate-favicon');
-        const faviconCode = document.getElementById('favicon-code');
-        const faviconHtml = document.getElementById('favicon-html');
-        const downloadFaviconBtn = document.getElementById('download-favicon');
+        // Image Resizer
+        const resizerInput = document.getElementById('resizer-input');
+        const resizerWidth = document.getElementById('resize-width');
+        const resizerHeight = document.getElementById('resize-height');
+        const maintainAspect = document.getElementById('maintain-aspect');
+        const resizeImageBtn = document.getElementById('resize-image');
+        const resizerOriginal = document.getElementById('resizer-original');
+        const resizerResult = document.getElementById('resizer-result');
+        const downloadResizedBtn = document.getElementById('download-resized');
+        const originalDimensions = document.getElementById('original-dimensions');
+        const resizedDimensions = document.getElementById('resized-dimensions');
         
-        generateFaviconBtn.addEventListener('click', () => {
-            if (!faviconInput.files || !faviconInput.files[0]) {
-                showNotification('Please select an image first', false);
-                return;
-            }
+        let originalWidth = 0;
+        let originalHeight = 0;
+        let aspectRatio = 1;
+        
+        resizerInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file || !file.type.match('image.*')) return;
             
-            const file = faviconInput.files[0];
             const reader = new FileReader();
-            
             reader.onload = function(e) {
                 const img = new Image();
                 img.onload = function() {
-                    // Generate HTML code
-                    const htmlCode = `<!-- Favicon for modern browsers -->
-<link rel="icon" href="/favicon.ico" sizes="any">
-<!-- Favicon for iOS devices -->
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<!-- Favicon for Android devices -->
-<link rel="icon" type="image/png" href="/android-chrome-192x192.png" sizes="192x192">
-<link rel="icon" type="image/png" href="/android-chrome-512x512.png" sizes="512x512">
-<!-- Favicon for Windows Metro -->
-<meta name="msapplication-TileColor" content="#6c5ce7">
-<meta name="msapplication-TileImage" content="/mstile-150x150.png">`;
+                    originalWidth = img.width;
+                    originalHeight = img.height;
+                    aspectRatio = originalWidth / originalHeight;
                     
-                    faviconHtml.value = htmlCode;
-                    faviconCode.style.display = 'block';
-                    downloadFaviconBtn.style.display = 'inline-flex';
+                    originalDimensions.textContent = `${originalWidth} × ${originalHeight} px`;
+                    resizerOriginal.src = e.target.result;
+                    resizerOriginal.style.display = 'block';
                     
-                    showNotification('Favicon package generated!');
+                    // Set default dimensions with aspect ratio
+                    if (maintainAspect.checked) {
+                        const defaultWidth = Math.min(800, originalWidth);
+                        resizerWidth.value = defaultWidth;
+                        resizerHeight.value = Math.round(defaultWidth / aspectRatio);
+                    }
                 };
                 img.src = e.target.result;
             };
             reader.readAsDataURL(file);
         });
         
-        downloadFaviconBtn.addEventListener('click', () => {
-            showNotification('Favicon package would be downloaded in a real implementation', true);
+        // Maintain aspect ratio when width changes
+        resizerWidth.addEventListener('input', () => {
+            if (maintainAspect.checked && aspectRatio > 0) {
+                resizerHeight.value = Math.round(resizerWidth.value / aspectRatio);
+            }
         });
+        
+        // Maintain aspect ratio when height changes
+        resizerHeight.addEventListener('input', () => {
+            if (maintainAspect.checked && aspectRatio > 0) {
+                resizerWidth.value = Math.round(resizerHeight.value * aspectRatio);
+            }
+        });
+        
+        resizeImageBtn.addEventListener('click', () => {
+            if (!resizerInput.files || !resizerInput.files[0]) {
+                showNotification('Please select an image first', false);
+                return;
+            }
+            
+            const file = resizerInput.files[0];
+            const width = parseInt(resizerWidth.value);
+            const height = parseInt(resizerHeight.value);
+            
+            if (width <= 0 || height <= 0) {
+                showNotification('Please enter valid dimensions', false);
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    const dataUrl = canvas.toDataURL(file.type || 'image/jpeg');
+                    resizerResult.src = dataUrl;
+                    resizerResult.style.display = 'block';
+                    resizedDimensions.textContent = `${width} × ${height} px`;
+                    downloadResizedBtn.style.display = 'inline-flex';
+                    
+                    // Set download filename
+                    const fileName = `resized_${width}x${height}_${file.name}`;
+                    downloadResizedBtn.onclick = function() {
+                        const link = document.createElement('a');
+                        link.download = fileName;
+                        link.href = dataUrl;
+                        link.click();
+                        showNotification('Resized image downloaded!');
+                    };
+                    
+                    showNotification('Image resized successfully!');
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Image Compressor
+        const compressorInput = document.getElementById('compressor-input');
+        const compressorQuality = document.getElementById('compressor-quality');
+        const compressImageBtn = document.getElementById('compress-image');
+        const compressorOriginal = document.getElementById('compressor-original');
+        const compressorResult = document.getElementById('compressor-result');
+        const downloadCompressedBtn = document.getElementById('download-compressed');
+        const originalSizeEl = document.getElementById('original-size');
+        const compressedSizeEl = document.getElementById('compressed-size');
+        const compressionRatioEl = document.getElementById('compression-ratio');
+        const compressorQualityValue = document.querySelector('.range-value[for="compressor-quality"]');
+        
+        compressorQuality.addEventListener('input', () => {
+            compressorQualityValue.textContent = compressorQuality.value;
+        });
+        
+        let originalFileSize = 0;
+        
+        compressorInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file || !file.type.match('image.*')) return;
+            
+            originalFileSize = file.size;
+            originalSizeEl.textContent = formatFileSize(file.size);
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                compressorOriginal.src = e.target.result;
+                compressorOriginal.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        });
+        
+        compressImageBtn.addEventListener('click', () => {
+            if (!compressorInput.files || !compressorInput.files[0]) {
+                showNotification('Please select an image first', false);
+                return;
+            }
+            
+            const file = compressorInput.files[0];
+            const quality = parseInt(compressorQuality.value) / 100;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    
+                    // Use WebP if supported, otherwise use JPEG
+                    let mimeType = 'image/jpeg';
+                    if (canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0) {
+                        mimeType = 'image/webp';
+                    }
+                    
+                    const dataUrl = canvas.toDataURL(mimeType, quality);
+                    compressorResult.src = dataUrl;
+                    compressorResult.style.display = 'block';
+                    
+                    // Calculate compressed file size
+                    const compressedSize = dataUrl.length * 0.75; // More accurate estimation
+                    compressedSizeEl.textContent = formatFileSize(compressedSize);
+                    
+                    // Calculate compression ratio
+                    const ratio = Math.round((1 - compressedSize / originalFileSize) * 100);
+                    compressionRatioEl.textContent = `Compression ratio: ${ratio}% size reduction`;
+                    compressionRatioEl.style.color = ratio > 0 ? 'var(--success)' : 'var(--danger)';
+                    
+                    downloadCompressedBtn.style.display = 'inline-flex';
+                    
+                    // Set download filename
+                    const fileName = 'compressed_' + file.name;
+                    downloadCompressedBtn.onclick = function() {
+                        const link = document.createElement('a');
+                        link.download = fileName;
+                        link.href = dataUrl;
+                        link.click();
+                        showNotification('Compressed image downloaded!');
+                    };
+                    
+                    showNotification('Image compressed successfully!');
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+        
+        // Format file size for display
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Image Converter
+        const converterInput = document.getElementById('converter-input');
+        const converterFormatOptions = document.querySelectorAll('.format-option[data-format]');
+        const converterQuality = document.getElementById('converter-quality');
+        const convertImageBtn = document.getElementById('convert-image');
+        const converterOriginal = document.getElementById('converter-original');
+        const converterResult = document.getElementById('converter-result');
+        const converterPlaceholder = document.getElementById('converter-placeholder');
+        const downloadConvertedBtn = document.getElementById('download-converted');
+        const converterQualityValue = document.querySelector('.range-value[for="converter-quality"]');
+        
+        let selectedFormat = 'jpeg';
+        
+        // Format selection
+        converterFormatOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                converterFormatOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+                selectedFormat = option.getAttribute('data-format');
+            });
+        });
+        
+        converterQuality.addEventListener('input', () => {
+            converterQualityValue.textContent = converterQuality.value;
+        });
+        
+        converterInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file || !file.type.match('image.*')) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                converterOriginal.src = e.target.result;
+                converterOriginal.style.display = 'block';
+                converterPlaceholder.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        });
+        
+        convertImageBtn.addEventListener('click', () => {
+            if (!converterInput.files || !converterInput.files[0]) {
+                showNotification('Please select an image first', false);
+                return;
+            }
+            
+            const file = converterInput.files[0];
+            const quality = parseInt(converterQuality.value) / 100;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    
+                    let mimeType = 'image/jpeg';
+                    if (selectedFormat === 'png') mimeType = 'image/png';
+                    if (selectedFormat === 'webp') mimeType = 'image/webp';
+                    if (selectedFormat === 'gif') mimeType = 'image/gif';
+                    if (selectedFormat === 'bmp') mimeType = 'image/bmp';
+                    
+                    // For formats that don't support quality parameter
+                    let dataUrl;
+                    if (selectedFormat === 'png' || selectedFormat === 'bmp') {
+                        dataUrl = canvas.toDataURL(mimeType);
+                    } else {
+                        dataUrl = canvas.toDataURL(mimeType, quality);
+                    }
+                    
+                    converterResult.src = dataUrl;
+                    converterResult.style.display = 'block';
+                    downloadConvertedBtn.style.display = 'inline-flex';
+                    
+                    // Set download filename
+                    const fileName = file.name.replace(/\.[^/.]+$/, "") + '.' + selectedFormat;
+                    downloadConvertedBtn.onclick = function() {
+                        const link = document.createElement('a');
+                        link.download = fileName;
+                        link.href = dataUrl;
+                        link.click();
+                        showNotification('Image downloaded successfully!');
+                    };
+                    
+                    showNotification(`Image converted to ${selectedFormat.toUpperCase()} successfully!`);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });        
         
         // Generators
         const passLength = document.getElementById('pass-length');
@@ -1720,6 +1965,83 @@
         // Initialize text processing
         textInput.addEventListener('input', () => {
             textOutput.value = textInput.value;
+        });
+        
+        // Favicon Generator
+        const faviconInput = document.getElementById('favicon-input');
+        const generateFaviconBtn = document.getElementById('generate-favicon');
+        const downloadFaviconBtn = document.getElementById('download-favicon');
+        const faviconHtml = document.getElementById('favicon-html');
+        const faviconCode = document.getElementById('favicon-code');
+        const faviconPreview = document.getElementById('favicon-preview');
+
+        generateFaviconBtn.addEventListener('click', () => {
+            const file = faviconInput.files[0];
+            if (!file) {
+                showNotification('Please select an image first', false);
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = new Image();
+                img.onload = function () {
+                    // Clear previous previews
+                    faviconPreview.innerHTML = '';
+                    
+                    // Generate previews for different sizes
+                    const sizes = [16, 32, 48, 64];
+                    
+                    sizes.forEach(size => {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = size;
+                        canvas.height = size;
+                        
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, size, size);
+                        
+                        // Create preview element
+                        const previewItem = document.createElement('div');
+                        previewItem.className = 'favicon-size';
+                        previewItem.style.textAlign = 'center';
+                        
+                        const previewImg = document.createElement('img');
+                        previewImg.src = canvas.toDataURL('image/png');
+                        previewImg.style.width = '64px';
+                        previewImg.style.height = '64px';
+                        previewImg.style.objectFit = 'contain';
+                        previewImg.style.borderRadius = '6px';
+                        previewImg.style.backgroundColor = 'rgba(0,0,0,0.1)';
+                        previewImg.style.border = '1px solid rgba(255,255,255,0.1)';
+                        
+                        const sizeText = document.createElement('p');
+                        sizeText.textContent = `${size}x${size}`;
+                        sizeText.style.marginTop = '5px';
+                        
+                        previewItem.appendChild(previewImg);
+                        previewItem.appendChild(sizeText);
+                        faviconPreview.appendChild(previewItem);
+                    });
+                    
+                    // Generate HTML code
+                    let htmlCode = '';
+                    sizes.forEach(size => {
+                        htmlCode += `<link rel="icon" type="image/png" href="favicon-${size}x${size}.png" sizes="${size}x${size}">\n`;
+                    });
+                    
+                    faviconHtml.value = htmlCode;
+                    faviconCode.style.display = 'block';
+                    downloadFaviconBtn.style.display = 'inline-flex';
+                    
+                    showNotification('Favicon preview generated!');
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+        
+        downloadFaviconBtn.addEventListener('click', () => {
+            showNotification('Favicon download functionality would be implemented with JSZip', true);
         });
     </script>
 </body>
