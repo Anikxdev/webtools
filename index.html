@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebTools Pro - All-in-One Web Utilities</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --accent: #fd79a8;
+            --dark: #1a1c2c;
+            --light: #f8f9fa;
+            --success: #00b894;
+            --warning: #fdcb6e;
+            --danger: #d63031;
+            --glass: rgba(255, 255, 255, 0.08);
+            --border-radius: 16px;
+            --shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        body {
+            background: linear-gradient(-45deg, #1a1c2c, #0c2461, #1e3799, #2d3436);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-bottom: 40px;
+        }
+        
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Animated particles background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 15s infinite linear;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-1000px) translateX(1000px) rotate(720deg); opacity: 0; }
+        }
+        
+        header {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.5rem 2rem;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.85;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .highlight {
+            background: rgba(108, 92, 231, 0.2);
+            padding: 0 8px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 3rem auto;
+            padding: 0 20px;
+        }
+        
+        .tool-nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 3rem;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+        
+        .tool-btn {
+            background: var(--glass);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            padding: 14px 28px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--light);
+            backdrop-filter: blur(5px);
+            white-space: nowrap;
+        }
+        
+        .tool-btn:hover {
+            background: rgba(108, 92, 231, 0.3);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .tool-btn.active {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            box-shadow: 0 10px 25px rgba(108, 92, 231, 0.3);
+            transform: translateY(-5px);
+        }
+        
+        .tool-btn i {
+            font-size: 1.3rem;
+        }
+        
+        .tool-section {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--shadow);
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            display: none;
+            transition: var(--transition);
+        }
+        
+        .tool-section.active {
+            display: block;
+            animation: fadeIn 0.6s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: var(--secondary);
+        }
+        
+        .tool-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2.5rem;
+        }
+        
+        .input-area, .output-area {
+            flex: 1;
+            min-width: 320px;
+        }
+        
+        .panel {
+            background: rgba(15, 15, 35, 0.4);
+            border-radius: 14px;
+            padding: 1.8rem;
+            margin-bottom: 1.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.7rem;
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: var(--secondary);
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(10, 10, 25, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: var(--transition);
+            color: var(--light);
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+        }
+        
+        button {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 15px 30px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(108, 92, 231, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .output-container {
+            background: rgba(10, 10, 25, 0.3);
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 25px;
+            min-height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .preview-image {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .range-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .range-value {
+            min-width: 45px;
+            text-align: center;
+            font-weight: bold;
+            background: rgba(108, 92, 231, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+        
+        .color-preview {
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-left: 12px;
+        }
+        
+        .download-btn {
+            background: var(--success);
+            margin-top: 20px;
+        }
+        
+        .format-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .format-option {
+            flex: 1;
+            min-width: 100px;
+            text-align: center;
+            padding: 12px;
+            background: rgba(10, 10, 25, 0.3);
+            border-radius: 10px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .format-option:hover {
+            background: rgba(108, 92, 231, 0.2);
+        }
+        
+        .format-option.active {
+            border-color: var(--primary);
+            background: rgba(108, 92, 231, 0.3);
+        }
+        
+        .format-option i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            background: rgba(15, 15, 35, 0.9);
+            padding: 18px 28px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transform: translateX(120%);
+            transition: var(--transition);
+            z-index: 1000;
+            border-left: 4px solid var(--success);
+            backdrop-filter: blur(5px);
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.error {
+            border-left: 4px solid var(--danger);
+        }
+        
+        .notification i {
+            font-size: 1.8rem;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1rem;
+            padding: 0 20px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            width: 100%;
+        }
+        
+        .stat-box {
+            background: rgba(108, 92, 231, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            min-width: 120px;
+        }
+        
+        .text-tools-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+        }
+        
+        .text-tools-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .text-tools-buttons button {
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            width: 100%;
+        }
+        
+        .tool-card {
+            background: rgba(15, 15, 35, 0.4);
+            border-radius: 14px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            background: rgba(108, 92, 231, 0.2);
+        }
+        
+        .tool-card h3 {
+            color: var(--secondary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        @media (max-width: 992px) {
+            .tool-content {
+                flex-direction: column;
+            }
+            
+            .tool-btn {
+                padding: 12px 20px;
+                font-size: 0.95rem;
+            }
+            
+            .section-title {
+                font-size: 1.7rem;
+            }
+            
+            header {
+                padding: 1.2rem;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .tool-nav {
+                gap: 10px;
+            }
+            
+            .tool-btn {
+                padding: 10px 16px;
+                font-size: 0.9rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .tool-section {
+                padding: 1.8rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated particles background -->
+    <div class="particles" id="particles"></div>
+    
+    <header>
+        <div class="logo">
+            <i class="fas fa-tools fa-2x" style="color: #a29bfe;"></i>
+            <h1>WebTools Pro</h1>
+        </div>
+        <p class="subtitle">A collection of <span class="highlight">various tools</span> for all your web development needs. 
+            Everything processes in your browser - <span class="highlight">no data leaves your computer</span>.</p>
+    </header>
+    
+    <div class="container">
+        <div class="tool-nav">
+            <button class="tool-btn active" data-tool="qr">
+                <i class="fas fa-qrcode"></i> QR Generator
+            </button>
+            <button class="tool-btn" data-tool="image-converter">
+                <i class="fas fa-exchange-alt"></i> Image Converter
+            </button>
+            <button class="tool-btn" data-tool="image-compressor">
+                <i class="fas fa-compress-alt"></i> Image Compressor
+            </button>
+            <button class="tool-btn" data-tool="image-resizer">
+                <i class="fas fa-expand-alt"></i> Image Resizer
+            </button>
+            <button class="tool-btn" data-tool="favicon">
+                <i class="fas fa-icons"></i> Favicon Generator
+            </button>
+            <button class="tool-btn" data-tool="robots">
+                <i class="fas fa-robot"></i> Robots.txt Generator
+            </button>
+            <button class="tool-btn" data-tool="sitemap">
+                <i class="fas fa-sitemap"></i> Sitemap Generator
+            </button>
+            <button class="tool-btn" data-tool="color-converter">
+                <i class="fas fa-palette"></i> Color Converter
+            </button>
+            <button class="tool-btn" data-tool="text-tools">
+                <i class="fas fa-font"></i> Text Tools
+            </button>
+            <button class="tool-btn" data-tool="base64">
+                <i class="fas fa-code"></i> Base64 Tools
+            </button>
+            <button class="tool-btn" data-tool="generators">
+                <i class="fas fa-bolt"></i> Generators
+            </button>
+        </div>
+        
+        <!-- QR Code Generator -->
+        <section id="qr-section" class="tool-section active">
+            <h2 class="section-title"><i class="fas fa-qrcode"></i> QR Code Generator</h2>
+            <div class="tool-content">
+                <div class="input-area">
+                    <div class="panel">
+                        <div class="input-group">
+                            <label for="qr-text">Content to encode:</label>
+                            <textarea id="qr-text" rows="4" placeholder="Enter text, URL, or any content...">https://github.com</textarea>
+                        </div>
+                        <div class="input-group">
+                            <label for="qr-size">Size (px):</label>
+                            <div class="range-container">
+                                <span>100</span>
+                                <input type="range" id="qr-size" min="100" max="500" value="220">
+                                <span>500</span>
+                                <span class="range-value">220</span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="qr-color">Color:</label>
+                            <div style="display: flex; align-items: center;">
+                                <input type="color" id="qr-color" value="#6c5ce7">
+                                <div class="color-preview" id="qr-color-preview" style="background-color: #6c5ce7;"></div>
+                            </div>
+                        </div>
+                        <button id="generate-qr">
+                            <i class="fas fa-bolt"></i> Generate QR Code
+                        </button>
+                    </div>
+                </div>
+                <div class="output-area">
+                    <div class="panel">
+                        <div class="output-container">
+                            <div id="qr-result"></div>
+                            <button id="download-qr" class="download-btn" style="display: none;">
+                                <i class="fas fa-download"></i> Download QR Code
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Favicon Generator -->
+        <section id="favicon-section" class="tool-section">
+            <h2 class="section-title"><i class="fas fa-icons"></i> Favicon Generator</h2>
+            <div class="tool-content">
+                <div class="input-area">
+                    <div class="panel">
+                        <div class="input-group">
+                            <label for="favicon-input">Upload Image:</label>
+                            <input type="file" id="favicon-input" accept="image/*">
+                        </div>
+                        <div class="input-group">
+                            <label>Favicon Sizes:</label>
+                            <div class="tool-grid">
+                                <div class="tool-card">
+                                    <h3><i class="fas fa-desktop"></i> Standard</h3>
+                                    <p>16x16, 32x32, 48x48</p>
+                                </div>
+                                <div class="tool-card">
+                                    <h3><i class="fas fa-apple"></i> Apple</h3>
+                                    <p>57x57, 60x60, 72x72, 76x76</p>
+                                </div>
+                                <div class="tool-card">
+                                    <h3><i class="fab fa-android"></i> Android</h3>
+                                    <p>36x36, 48x48, 72x72, 96x96</p>
+                                </div>
+                                <div class="tool-card">
+                                    <h3><i class="fas fa-mobile-alt"></i> Windows</h3>
+                                    <p>70x70, 150x150, 310x150</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button id="generate-favicon">
+                            <i class="fas fa-magic"></i> Generate Favicon
+                        </button>
+                    </div>
+                </div>
+                <div class="output-area">
+                    <div class="panel">
+                        <div class="output-container">
+                            <div id="favicon-preview" style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">
+                                <div class="favicon-size">
+                                    <div style="width: 32px; height: 32px; background: #6c5ce7; border-radius: 6px; margin: 0 auto;"></div>
+                                    <p>32x32</p>
+                                </div>
+                                <div class="favicon-size">
+                                    <div style="width: 48px; height: 48px; background: #a29bfe; border-radius: 6px; margin: 0 auto;"></div>
+                                    <p>48x48</p>
+                                </div>
+                                <div class="favicon-size">
+                                    <div style="width: 64px; height: 64px; background: #fd79a8; border-radius: 6px; margin: 0 auto;"></div>
+                                    <p>64x64</p>
+                                </div>
+                            </div>
+                            <div id="favicon-code" style="text-align: left; width: 100%; margin-top: 20px; display: none;">
+                                <label>HTML Code:</label>
+                                <textarea id="favicon-html" rows="4" readonly></textarea>
+                            </div>
+                            <button id="download-favicon" class="download-btn" style="display: none; margin-top: 20px;">
+                                <i class="fas fa-download"></i> Download Favicon Package
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Robots.txt Generator -->
+        <section id="robots-section" class="tool-section">
+            <h2 class="section-title"><i class="fas fa-robot"></i> Robots.txt Generator</h2>
+            <div class="tool-content">
+                <div class="input-area">
+                    <div class="panel">
+                        <div class="input-group">
+                            <label for="user-agent">User-agent:</label>
+                            <select id="user-agent">
+                                <option value="*">All User Agents (*)</option>
+                                <option value="Googlebot">Googlebot</option>
+                                <option value="Bingbot">Bingbot</option>
+                                <option value="Slurp">Yahoo! Slurp</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Allow/Disallow:</label>
+                            <div style="display: flex; gap: 15px; margin-top: 10px;">
+                                <div style="flex: 1;">
+                                    <label for="allow-paths">Allow Paths:</label>
+                                    <textarea id="allow-paths" rows="3" placeholder="/public\n/images/"></textarea>
+                                </div>
+                                <div style="flex: 1;">
+                                    <label for="disallow-paths">Disallow Paths:</label>
+                                    <textarea id="disallow-paths" rows="3" placeholder="/private\n/admin/"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="sitemap-url">Sitemap URL:</label>
+                            <input type="text" id="sitemap-url" placeholder="https://example.com/sitemap.xml">
+                        </div>
+                        <button id="generate-robots">
+                            <i class="fas fa-robot"></i> Generate Robots.txt
+                        </button>
+                    </div>
+                </div>
+                <div class="output-area">
+                    <div class="panel">
+                        <div class="output-container">
+                            <label for="robots-output">Robots.txt Content:</label>
+                            <textarea id="robots-output" rows="10" readonly></textarea>
+                            <button id="copy-robots" style="margin-top: 15px;">
+                                <i class="fas fa-copy"></i> Copy to Clipboard
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Sitemap Generator -->
+        <section id="sitemap-section" class="tool-section">
+            <h2 class="section-title"><i class="fas fa-sitemap"></i> Sitemap Generator</h2>
+            <div class="tool-content">
+                <div class="input-area">
+                    <div class="panel">
+                        <div class="input-group">
+                            <label for="website-url">Website URL:</label>
+                            <input type="text" id="website-url" placeholder="https://example.com" value="https://example.com">
+                        </div>
+                        <div class="input-group">
+                            <label>Pages to include:</label>
+                            <textarea id="sitemap-pages" rows="6" placeholder="/about\n/contact\n/products">/
+/about
+/contact
+/products
+/blog</textarea>
+                        </div>
+                        <div class="input-group">
+                            <label for="change-freq">Change Frequency:</label>
+                            <select id="change-freq">
+                                <option value="always">Always</option>
+                                <option value="hourly">Hourly</option>
+                                <option value="daily">Daily</option>
+                                <option value="weekly" selected>Weekly</option>
+                                <option value="monthly">Monthly</option>
+                                <option value="yearly">Yearly</option>
+                                <option value="never">Never</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="sitemap-priority">Priority (0.0 - 1.0):</label>
+                            <input type="range" id="sitemap-priority" min="0" max="10" value="5">
+                            <div class="range-container">
+                                <span>0.0</span>
+                                <span class="range-value">0.5</span>
+                                <span>1.0</span>
+                            </div>
+                        </div>
+                        <button id="generate-sitemap">
+                            <i class="fas fa-sitemap"></i> Generate Sitemap
+                        </button>
+                    </div>
+                </div>
+                <div class="output-area">
+                    <div class="panel">
+                        <div class="output-container">
+                            <label for="sitemap-output">Sitemap XML:</label>
+                            <textarea id="sitemap-output" rows="15" readonly></textarea>
+                            <button id="download-sitemap" class="download-btn" style="margin-top: 15px;">
+                                <i class="fas fa-download"></i> Download Sitemap.xml
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Image Converter -->
+        <section id="image-converter-section" class="tool-section">
+            <h2 class="section-title"><i class="fas fa-exchange-alt"></i> Image Converter</h2>
+            <div class="tool-content">
+                <div class="input-area">
+                    <div class="panel">
+                        <div class="input-group">
+                            <label for="converter-input">Upload Image:</label>
+                            <input type="file" id="converter-input" accept="image/*">
+                        </div>
+                        <div class="input-group">
+                            <label>Convert to:</label>
+                            <div class="format-options">
+                                <div class="format-option active" data-format="jpeg">
+                                    <i class="fas fa-file-image"></i>
+                                    <span>JPEG</span>
+                                </div>
+                                <div class="format-option" data-format="png">
+                                    <i class="fas fa-file-image"></i>
+                                    <span>PNG</span>
+                                </div>
+                                <div class="format-option" data-format="webp">
+                                    <i class="fas fa-file-image"></i>
+                                    <span>WebP</span>
+                                </div>
+                                <div class="format-option" data-format="gif">
+                                    <i class="fas fa-file-image"></i>
+                                    <span>GIF</span>
+                                </div>
+                                <div class="format-option" data-format="bmp">
+                                    <i class="fas fa-file-image"></i>
+                                    <span>BMP</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="converter-quality">Quality:</label>
+                            <div class="range-container">
+                                <span>0</span>
+                                <input type="range" id="converter-quality" min="0" max="100" value="85">
+                                <span>100</span>
+                                <span class="range-value">85</span>
+                            </div>
+                        </div>
+                        <button id="convert-image">
+                            <i class="fas fa-sync-alt"></i> Convert Image
+                        </button>
+                    </div>
+                </div>
+                <div class="output-area">
+                    <div class="panel">
+                        <div class="output-container">
+                            <div style="width: 100%; text-align: left; margin-bottom: 20px;">
+                                <h4 style="color: var(--secondary); margin-bottom: 10px;">Original Image</h4>
+                                <img id="converter-original" class="preview-image" style="display: none;">
+                            </div>
+                            <div style="width: 100%; text-align: left;">
+                                <h4 style="color: var(--secondary); margin-bottom: 10px;">Converted Image</h4>
+                                <img id="converter-result" class="preview-image" style="display: none;">
+                                <p id="converter-placeholder">Your converted image will appear here</p>
+                                <button id="download-converted" class="download-btn" style="display: none; margin-top: 20px;">
+                                    <i class="fas fa-download"></i> Download Converted Image
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Generators -->
+        <section id="generators-section" class="tool-section">
+            <h2 class="section-title"><i class="fas fa-bolt"></i> Generators</h2>
+            <div class="tool-content">
+                <div class="input-area">
+                    <div class="panel">
+                        <div class="input-group">
+                            <label>Password Generator:</label>
+                            <div class="input-group">
+                                <label for="pass-length">Password Length:</label>
+                                <div class="range-container">
+                                    <span>6</span>
+                                    <input type="range" id="pass-length" min="6" max="32" value="12">
+                                    <span>32</span>
+                                    <span class="range-value">12</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>
+                                    <input type="checkbox" id="pass-uppercase" checked>
+                                    Include Uppercase Letters
+                                </label>
+                            </div>
+                            <div class="input-group">
+                                <label>
+                                    <input type="checkbox" id="pass-numbers" checked>
+                                    Include Numbers
+                                </label>
+                            </div>
+                            <div class="input-group">
+                                <label>
+                                    <input type="checkbox" id="pass-symbols">
+                                    Include Symbols
+                                </label>
+                            </div>
+                            <button id="generate-password">
+                                <i class="fas fa-key"></i> Generate Password
+                            </button>
+                        </div>
+                        <div class="input-group">
+                            <label>UUID Generator:</label>
+                            <button id="generate-uuid">
+                                <i class="fas fa-fingerprint"></i> Generate UUID
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="output-area">
+                    <div class="panel">
+                        <div class="output-container">
+                            <div class="input-group">
+                                <label for="password-output">Generated Password:</label>
+                                <input type="text" id="password-output" readonly>
+                                <button id="copy-password" style="width: 100%; margin-top: 15px;">
+                                    <i class="fas fa-copy"></i> Copy Password
+                                </button>
+                            </div>
+                            <div class="input-group" style="margin-top: 20px;">
+                                <label for="uuid-output">Generated UUID:</label>
+                                <input type="text" id="uuid-output" readonly>
+                                <button id="copy-uuid" style="width: 100%; margin-top: 10px;">
+                                    <i class="fas fa-copy"></i> Copy UUID
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Image Compressor -->
+        <section id="image-compressor-section" class="tool-section">
+            <h2 class="section-title"><i class="fas fa-compress-alt"></i> Image Compressor</h2>
+            <div class="tool-content">
+                <div class="input-area">
+                    <div class="panel">
+                        <div class="input-group">
+                            <label for="compressor-input">Upload Image:</label>
+                            <input type="file" id="compressor-input" accept="image/*">
+                        </div>
+                        <div class="input-group">
+                            <label for="compressor-quality">Compression Quality:</label>
+                            <div class="range-container">
+                                <span>Low</span>
+                                <input type="range" id="compressor-quality" min="10" max="90" value="70">
+                                <span>High</span>
+                                <span class="range-value">70%</span>
+                            </div>
+                        </div>
+                        <button id="compress-image">
+                            <i class="fas fa-file-archive"></i> Compress Image
+                        </button>
+                    </div>
+                </div>
+                <div class="output-area">
+                    <div class="panel">
+                        <div class="output-container">
+                            <div style="width: 100%; text-align: left; margin-bottom: 20px;">
+                                <h4 style="color: var(--secondary); margin-bottom: 10px;">Original Image</h4>
+                                <img id="compressor-original" class="preview-image" style="display: none;">
+                                <div id="original-size"></div>
+                            </div>
+                            <div style="width: 100%; text-align: left;">
+                                <h4 style="color: var(--secondary); margin-bottom: 10px;">Compressed Image</h4>
+                                <img id="compressor-result" class="preview-image" style="display: none;">
+                                <div id="compressed-size"></div>
+                                <p id="compressor-placeholder">Your compressed image will appear here</p>
+                                <button id="download-compressed" class="download-btn" style="display: none; margin-top: 20px;">
+                                    <i class="fas fa-download"></i> Download Compressed Image
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Image Resizer -->
+        <section id="image-resizer-section" class="tool-section">
+            <h2 class="section-title"><i class="fas fa-expand-alt"></i> Image Resizer</h2>
+            <div class="tool-content">
+                <div class="input-area">
+                    <div class="panel">
+                        <div class="input-group">
+                            <label for="resizer-input">Upload Image:</label>
+                            <input type="file" id="resizer-input" accept="image/*">
+                        </div>
+                        <div class="input-group">
+                            <label for="resize-width">Width (px):</label>
+                            <input type="number" id="resize-width" min="10" max="5000" placeholder="Width">
+                        </div>
+                        <div class="input-group">
+                            <label for="resize-height">Height (px):</label>
+                            <input type="number" id="resize-height" min="10" max="5000" placeholder="Height">
+                        </div>
+                        <div class="input-group">
+                            <label>
+                                <input type="checkbox" id="maintain-aspect" checked>
+                                Maintain Aspect Ratio
+                            </label>
+                        </div>
+                        <button id="resize-image">
+                            <i class="fas fa-crop-alt"></i> Resize Image
+                        </button>
+                    </div>
+                </div>
+                <div class="output-area">
+                    <div class="panel">
+                        <div class="output-container">
+                            <div style="width: 100%; text-align: left; margin-bottom: 20px;">
+                                <h4 style="color: var(--secondary); margin-bottom: 10px;">Original Image</h4>
+                                <img id="resizer-original" class="preview-image" style="display: none;">
+                                <div id="original-dimensions"></div>
+                            </div>
+                            <div style="width: 100%; text-align: left;">
+                                <h4 style="color: var(--secondary); margin-bottom: 10px;">Resized Image</h4>
+                                <img id="resizer-result" class="preview-image" style="display: none;">
+                                <div id="resized-dimensions"></div>
+                                <p id="resizer-placeholder">Your resized image will appear here</p>
+                                <button id="download-resized" class="download-btn" style="display: none; margin-top: 20px;">
+                                    <i class="fas fa-download"></i> Download Resized Image
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Color Converter -->
+        <section id="color-converter-section" class="tool-section">
+            <h2 class="section-title"><i class="fas fa-palette"></i> Color Converter</h2>
+            <div class="tool-content">
+                <div class="input-area">
+                    <div class="panel">
+                        <div class="input-group">
+                            <label for="color-input">Select a Color:</label>
+                            <input type="color" id="color-input" value="#6c5ce7">
+                            <div class="color-preview" id="color-preview" style="margin-top: 10px; background-color: #6c5ce7;"></div>
+                        </div>
+                        <div class="input-group">
+                            <label for="hex-value">HEX Value:</label>
+                            <input type="text" id="hex-value" value="#6c5ce7" readonly>
+                        </div>
+                        <div class="input-group">
+                            <label for="rgb-value">RGB Value:</label>
+                            <input type="text" id="rgb-value" value="rgb(108, 92, 231)" readonly>
+                        </div>
+                        <div class="input-group">
+                            <label for="hsl-value">HSL Value:</label>
+                            <input type="text" id="hsl-value" value="hsl(247, 74%, 63%)" readonly>
+                        </div>
+                        <button id="copy-color" style="width: 100%;">
+                            <i class="fas fa-copy"></i> Copy All Values
+                        </button>
+                    </div>
+                </div>
+                <div class="output-area">
+                    <div class="panel">
+                        <div class="output-container">
+                            <div id="color-shades">
+                                <h4 style="color: var(--secondary); margin-bottom: 15px;">Color Shades</h4>
+                                <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+                                    <div class="shade" style="background-color: #4d3fd6;"></div>
+                                    <div class="shade" style="background-color: #6c5ce7;"></div>
+                                    <div class="shade" style="background-color: #8b7eec;"></div>
+                                    <div class="shade" style="background-color: #a9a1f1;"></div>
+                                    <div class="shade" style="background-color: #c8c4f6;"></div>
+                                </div>
+                            </div>
+                            <div id="color-palette" style="margin-top: 25px;">
+                                <h4 style="color: var(--secondary); margin-bottom: 15px;">Suggested Palette</h4>
+                                <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+                                    <div class="palette-color" style="background-color: #6c5ce7;"></div>
+                                    <div class="palette-color" style="background-color: #fd79a8;"></div>
+                                    <div class="palette-color" style="background-color: #00b894;"></div>
+                                    <div class="palette-color" style="background-color: #fdcb6e;"></div>
+                                    <div class="palette-color" style="background-color: #a29bfe;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Text Tools -->
+        <section id="text-tools-section" class="tool-section">
+            <h2 class="section-title"><i class="fas fa-font"></i> Text Tools</h2>
+            <div class="tool-content">
+                <div class="input-area">
+                    <div class="panel">
+                        <div class="input-group">
+                            <label for="text-input">Enter Text:</label>
+                            <textarea id="text-input" rows="6" placeholder="Enter text to process...">WebTools Pro - The Ultimate Web Utilities Collection</textarea>
+                        </div>
+                        <div class="input-group">
+                            <label>Text Operations:</label>
+                            <div class="text-tools-buttons">
+                                <button id="uppercase">
+                                    <i class="fas fa-text-height"></i> Uppercase
+                                </button>
+                                <button id="lowercase">
+                                    <i class="fas fa-text-height"></i> Lowercase
+                                </button>
+                                <button id="capitalize">
+                                    <i class="fas fa-text-width"></i> Capitalize
+                                </button>
+                                <button id="trim">
+                                    <i class="fas fa-cut"></i> Trim Whitespace
+                                </button>
+                                <button id="reverse">
+                                    <i class="fas fa-exchange-alt"></i> Reverse
+                                </button>
+                                <button id="count">
+                                    <i class="fas fa-calculator"></i> Count
+                                </button>
+                                <button id="remove-duplicates">
+                                    <i class="fas fa-backspace"></i> Remove Duplicates
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="output-area">
+                    <div class="panel">
+                        <div class="output-container" style="text-align: left;">
+                            <label for="text-output">Processed Text:</label>
+                            <textarea id="text-output" rows="8" readonly></textarea>
+                            <div id="text-stats" style="margin-top: 15px; display: none;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                    <div>
+                                        <strong>Characters:</strong> <span id="char-count">0</span>
+                                    </div>
+                                    <div>
+                                        <strong>Words:</strong> <span id="word-count">0</span>
+                                    </div>
+                                    <div>
+                                        <strong>Lines:</strong> <span id="line-count">0</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <strong>Processing Time:</strong> <span id="process-time">0</span>ms
+                                </div>
+                            </div>
+                            <button id="copy-text" style="width: 100%; margin-top: 15px;">
+                                <i class="fas fa-copy"></i> Copy to Clipboard
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Base64 Tools -->
+        <section id="base64-section" class="tool-section">
+            <h2 class="section-title"><i class="fas fa-code"></i> Base64 Tools</h2>
+            <div class="tool-content">
+                <div class="input-area">
+                    <div class="panel">
+                        <div class="input-group">
+                            <label for="base64-action">Action:</label>
+                            <select id="base64-action">
+                                <option value="encode">Encode to Base64</option>
+                                <option value="decode">Decode from Base64</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="base64-input">Input:</label>
+                            <textarea id="base64-input" rows="6" placeholder="Enter text to encode or decode...">WebTools Pro</textarea>
+                        </div>
+                        <button id="process-base64">
+                            <i class="fas fa-cogs"></i> Process
+                        </button>
+                    </div>
+                </div>
+                <div class="output-area">
+                    <div class="panel">
+                        <div class="output-container" style="text-align: left;">
+                            <label for="base64-output">Result:</label>
+                            <textarea id="base64-output" rows="8" readonly></textarea>
+                            <button id="copy-base64" style="width: 100%; margin-top: 15px;">
+                                <i class="fas fa-copy"></i> Copy to Clipboard
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <div id="notification" class="notification">
+        <i class="fas fa-check-circle"></i>
+        <div class="notification-content">Operation completed successfully!</div>
+    </div>
+    
+    <footer>
+        <p>WebTools Pro &copy; 2025 | All tools work entirely in your browser - no data is sent to any server</p>
+        <p style="margin-top: 10px; font-size: 0.9rem;">Created with Love By Anik</p>
+    </footer>
+
+    <script>
+        // Create animated particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Random size
+                const size = Math.random() * 20 + 5;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // Random position
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                
+                // Random animation duration
+                const duration = Math.random() * 20 + 10;
+                particle.style.animationDuration = `${duration}s`;
+                
+                // Random animation delay
+                const delay = Math.random() * 5;
+                particle.style.animationDelay = `${delay}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        // Initialize particles
+        createParticles();
+        
+        // Tool navigation
+        const toolBtns = document.querySelectorAll('.tool-btn');
+        const toolSections = document.querySelectorAll('.tool-section');
+        
+        toolBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const toolId = btn.getAttribute('data-tool');
+                
+                // Update active button
+                toolBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Show active section
+                toolSections.forEach(section => {
+                    section.classList.remove('active');
+                    if (section.id === `${toolId}-section`) {
+                        section.classList.add('active');
+                    }
+                });
+            });
+        });
+        
+        // Notification system
+        function showNotification(message, isSuccess = true) {
+            const notification = document.getElementById('notification');
+            const icon = notification.querySelector('i');
+            const content = notification.querySelector('.notification-content');
+            
+            content.textContent = message;
+            notification.className = `notification ${isSuccess ? '' : 'error'}`;
+            icon.className = isSuccess ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // QR Code Generator
+        const qrText = document.getElementById('qr-text');
+        const qrSize = document.getElementById('qr-size');
+        const qrColor = document.getElementById('qr-color');
+        const qrColorPreview = document.getElementById('qr-color-preview');
+        const generateQrBtn = document.getElementById('generate-qr');
+        const qrResult = document.getElementById('qr-result');
+        const downloadQrBtn = document.getElementById('download-qr');
+        const sizeValue = document.querySelector('.range-value[for="qr-size"]');
+        
+        // Update range value display
+        qrSize.addEventListener('input', () => {
+            sizeValue.textContent = qrSize.value;
+        });
+        
+        // Update color preview
+        qrColor.addEventListener('input', () => {
+            qrColorPreview.style.backgroundColor = qrColor.value;
+        });
+        
+        // Generate QR Code
+        generateQrBtn.addEventListener('click', () => {
+            const text = qrText.value.trim();
+            if (!text) {
+                showNotification('Please enter text to encode', false);
+                return;
+            }
+            
+            qrResult.innerHTML = '';
+            const canvas = document.createElement('canvas');
+            qrResult.appendChild(canvas);
+            
+            QRCode.toCanvas(canvas, text, {
+                width: parseInt(qrSize.value),
+                color: {
+                    dark: qrColor.value,
+                    light: '#ffffff00' // Transparent background
+                }
+            }, (error) => {
+                if (error) {
+                    showNotification('Error generating QR code: ' + error.message, false);
+                    return;
+                }
+                
+                canvas.style.borderRadius = '8px';
+                canvas.style.background = 'transparent';
+                downloadQrBtn.style.display = 'inline-flex';
+                
+                showNotification('QR code generated successfully!');
+            });
+        });
+        
+        // Download QR Code
+        downloadQrBtn.addEventListener('click', () => {
+            const canvas = qrResult.querySelector('canvas');
+            if (!canvas) {
+                showNotification('Generate a QR code first', false);
+                return;
+            }
+            
+            const link = document.createElement('a');
+            link.download = 'qrcode.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            
+            showNotification('QR code downloaded!');
+        });
+        
+        // Robots.txt Generator
+        const userAgent = document.getElementById('user-agent');
+        const allowPaths = document.getElementById('allow-paths');
+        const disallowPaths = document.getElementById('disallow-paths');
+        const sitemapUrl = document.getElementById('sitemap-url');
+        const generateRobotsBtn = document.getElementById('generate-robots');
+        const robotsOutput = document.getElementById('robots-output');
+        const copyRobotsBtn = document.getElementById('copy-robots');
+        
+        generateRobotsBtn.addEventListener('click', () => {
+            let robotsContent = `User-agent: ${userAgent.value}\n`;
+            
+            // Add allow paths
+            const allowArray = allowPaths.value.split('\n');
+            allowArray.forEach(path => {
+                if (path.trim()) {
+                    robotsContent += `Allow: ${path.trim()}\n`;
+                }
+            });
+            
+            // Add disallow paths
+            const disallowArray = disallowPaths.value.split('\n');
+            disallowArray.forEach(path => {
+                if (path.trim()) {
+                    robotsContent += `Disallow: ${path.trim()}\n`;
+                }
+            });
+            
+            // Add sitemap
+            if (sitemapUrl.value.trim()) {
+                robotsContent += `\nSitemap: ${sitemapUrl.value.trim()}\n`;
+            }
+            
+            robotsOutput.value = robotsContent;
+            showNotification('Robots.txt generated!');
+        });
+        
+        copyRobotsBtn.addEventListener('click', () => {
+            robotsOutput.select();
+            document.execCommand('copy');
+            showNotification('Copied to clipboard!');
+        });
+        
+        // Sitemap Generator
+        const websiteUrl = document.getElementById('website-url');
+        const sitemapPages = document.getElementById('sitemap-pages');
+        const changeFreq = document.getElementById('change-freq');
+        const sitemapPriority = document.getElementById('sitemap-priority');
+        const generateSitemapBtn = document.getElementById('generate-sitemap');
+        const sitemapOutput = document.getElementById('sitemap-output');
+        const downloadSitemapBtn = document.getElementById('download-sitemap');
+        const sitemapPriorityValue = document.querySelector('.range-value[for="sitemap-priority"]');
+        
+        sitemapPriority.addEventListener('input', () => {
+            sitemapPriorityValue.textContent = (sitemapPriority.value / 10).toFixed(1);
+        });
+        
+        generateSitemapBtn.addEventListener('click', () => {
+            const baseUrl = websiteUrl.value.trim();
+            if (!baseUrl) {
+                showNotification('Please enter your website URL', false);
+                return;
+            }
+            
+            const pages = sitemapPages.value.trim().split('\n');
+            const freq = changeFreq.value;
+            const priority = (sitemapPriority.value / 10).toFixed(1);
+            const date = new Date().toISOString().split('T')[0];
+            
+            let sitemapContent = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+            sitemapContent += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+            
+            pages.forEach(page => {
+                if (page.trim()) {
+                    const url = page.trim().startsWith('/') ? baseUrl + page.trim() : baseUrl + '/' + page.trim();
+                    sitemapContent += `  <url>\n`;
+                    sitemapContent += `    <loc>${url}</loc>\n`;
+                    sitemapContent += `    <lastmod>${date}</lastmod>\n`;
+                    sitemapContent += `    <changefreq>${freq}</changefreq>\n`;
+                    sitemapContent += `    <priority>${priority}</priority>\n`;
+                    sitemapContent += `  </url>\n`;
+                }
+            });
+            
+            sitemapContent += `</urlset>`;
+            
+            sitemapOutput.value = sitemapContent;
+            downloadSitemapBtn.style.display = 'inline-flex';
+            showNotification('Sitemap generated!');
+        });
+        
+        downloadSitemapBtn.addEventListener('click', () => {
+            const blob = new Blob([sitemapOutput.value], {type: 'application/xml'});
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.download = 'sitemap.xml';
+            link.href = url;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+            showNotification('Sitemap downloaded!');
+        });
+        
+        // Favicon Generator
+        const faviconInput = document.getElementById('favicon-input');
+        const generateFaviconBtn = document.getElementById('generate-favicon');
+        const faviconCode = document.getElementById('favicon-code');
+        const faviconHtml = document.getElementById('favicon-html');
+        const downloadFaviconBtn = document.getElementById('download-favicon');
+        
+        generateFaviconBtn.addEventListener('click', () => {
+            if (!faviconInput.files || !faviconInput.files[0]) {
+                showNotification('Please select an image first', false);
+                return;
+            }
+            
+            const file = faviconInput.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    // Generate HTML code
+                    const htmlCode = `<!-- Favicon for modern browsers -->
+<link rel="icon" href="/favicon.ico" sizes="any">
+<!-- Favicon for iOS devices -->
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<!-- Favicon for Android devices -->
+<link rel="icon" type="image/png" href="/android-chrome-192x192.png" sizes="192x192">
+<link rel="icon" type="image/png" href="/android-chrome-512x512.png" sizes="512x512">
+<!-- Favicon for Windows Metro -->
+<meta name="msapplication-TileColor" content="#6c5ce7">
+<meta name="msapplication-TileImage" content="/mstile-150x150.png">`;
+                    
+                    faviconHtml.value = htmlCode;
+                    faviconCode.style.display = 'block';
+                    downloadFaviconBtn.style.display = 'inline-flex';
+                    
+                    showNotification('Favicon package generated!');
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+        
+        downloadFaviconBtn.addEventListener('click', () => {
+            showNotification('Favicon package would be downloaded in a real implementation', true);
+        });
+        
+        // Generators
+        const passLength = document.getElementById('pass-length');
+        const passUppercase = document.getElementById('pass-uppercase');
+        const passNumbers = document.getElementById('pass-numbers');
+        const passSymbols = document.getElementById('pass-symbols');
+        const generatePassBtn = document.getElementById('generate-password');
+        const passwordOutput = document.getElementById('password-output');
+        const copyPassBtn = document.getElementById('copy-password');
+        const passLengthValue = document.querySelector('.range-value[for="pass-length"]');
+        
+        const generateUuidBtn = document.getElementById('generate-uuid');
+        const uuidOutput = document.getElementById('uuid-output');
+        const copyUuidBtn = document.getElementById('copy-uuid');
+        
+        passLength.addEventListener('input', () => {
+            passLengthValue.textContent = passLength.value;
+        });
+        
+        // Password Generator
+        generatePassBtn.addEventListener('click', () => {
+            const length = parseInt(passLength.value);
+            const uppercase = passUppercase.checked;
+            const numbers = passNumbers.checked;
+            const symbols = passSymbols.checked;
+            
+            let charset = 'abcdefghijklmnopqrstuvwxyz';
+            if (uppercase) charset += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            if (numbers) charset += '0123456789';
+            if (symbols) charset += '!@#$%^&*()_+-=[]{}|;:,.<>?';
+            
+            let password = '';
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * charset.length);
+                password += charset[randomIndex];
+            }
+            
+            passwordOutput.value = password;
+            showNotification('Password generated!');
+        });
+        
+        copyPassBtn.addEventListener('click', () => {
+            passwordOutput.select();
+            document.execCommand('copy');
+            showNotification('Password copied to clipboard!');
+        });
+        
+        // UUID Generator
+        generateUuidBtn.addEventListener('click', () => {
+            const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+            
+            uuidOutput.value = uuid;
+            showNotification('UUID generated!');
+        });
+        
+        copyUuidBtn.addEventListener('click', () => {
+            uuidOutput.select();
+            document.execCommand('copy');
+            showNotification('UUID copied to clipboard!');
+        });
+        
+        // Initialize with a generated password and UUID
+        generatePassBtn.click();
+        generateUuidBtn.click();
+        
+        // Color Converter
+        const colorInput = document.getElementById('color-input');
+        const hexValue = document.getElementById('hex-value');
+        const rgbValue = document.getElementById('rgb-value');
+        const hslValue = document.getElementById('hsl-value');
+        const colorPreview = document.getElementById('color-preview');
+        const copyColorBtn = document.getElementById('copy-color');
+        
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+        
+        function rgbToHsl(r, g, b) {
+            r /= 255, g /= 255, b /= 255;
+            const max = Math.max(r, g, b), min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+            
+            if (max === min) {
+                h = s = 0; // achromatic
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                h /= 6;
+            }
+            
+            return {
+                h: Math.round(h * 360),
+                s: Math.round(s * 100),
+                l: Math.round(l * 100)
+            };
+        }
+        
+        function updateColorValues() {
+            const color = colorInput.value;
+            colorPreview.style.backgroundColor = color;
+            hexValue.value = color;
+            
+            const rgb = hexToRgb(color);
+            if (rgb) {
+                rgbValue.value = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+                
+                const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+                hslValue.value = `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
+            }
+        }
+        
+        colorInput.addEventListener('input', updateColorValues);
+        updateColorValues();
+        
+        copyColorBtn.addEventListener('click', () => {
+            const text = `HEX: ${hexValue.value}\nRGB: ${rgbValue.value}\nHSL: ${hslValue.value}`;
+            navigator.clipboard.writeText(text);
+            showNotification('Color values copied to clipboard!');
+        });
+        
+        // Text Tools
+        const textInput = document.getElementById('text-input');
+        const textOutput = document.getElementById('text-output');
+        const uppercaseBtn = document.getElementById('uppercase');
+        const lowercaseBtn = document.getElementById('lowercase');
+        const capitalizeBtn = document.getElementById('capitalize');
+        const trimBtn = document.getElementById('trim');
+        const reverseBtn = document.getElementById('reverse');
+        const countBtn = document.getElementById('count');
+        const removeDuplicatesBtn = document.getElementById('remove-duplicates');
+        const copyTextBtn = document.getElementById('copy-text');
+        const textStats = document.getElementById('text-stats');
+        const charCount = document.getElementById('char-count');
+        const wordCount = document.getElementById('word-count');
+        const lineCount = document.getElementById('line-count');
+        const processTime = document.getElementById('process-time');
+        
+        function processText(action) {
+            const startTime = performance.now();
+            let result = textInput.value;
+            
+            switch (action) {
+                case 'uppercase':
+                    result = result.toUpperCase();
+                    break;
+                case 'lowercase':
+                    result = result.toLowerCase();
+                    break;
+                case 'capitalize':
+                    result = result.replace(/\b\w/g, char => char.toUpperCase());
+                    break;
+                case 'trim':
+                    result = result.trim();
+                    break;
+                case 'reverse':
+                    result = result.split('').reverse().join('');
+                    break;
+                case 'remove-duplicates':
+                    result = [...new Set(result.split('\n'))].join('\n');
+                    break;
+                case 'count':
+                    // Just count, don't modify text
+                    break;
+            }
+            
+            if (action !== 'count') {
+                textOutput.value = result;
+            }
+            
+            // Update stats
+            charCount.textContent = result.length;
+            wordCount.textContent = result.trim() ? result.trim().split(/\s+/).length : 0;
+            lineCount.textContent = result ? result.split('\n').length : 0;
+            processTime.textContent = Math.round(performance.now() - startTime);
+            
+            textStats.style.display = 'block';
+            
+            if (action !== 'count') {
+                showNotification(`Text processed: ${action}`);
+            }
+        }
+        
+        uppercaseBtn.addEventListener('click', () => processText('uppercase'));
+        lowercaseBtn.addEventListener('click', () => processText('lowercase'));
+        capitalizeBtn.addEventListener('click', () => processText('capitalize'));
+        trimBtn.addEventListener('click', () => processText('trim'));
+        reverseBtn.addEventListener('click', () => processText('reverse'));
+        removeDuplicatesBtn.addEventListener('click', () => processText('remove-duplicates'));
+        countBtn.addEventListener('click', () => processText('count'));
+        
+        copyTextBtn.addEventListener('click', () => {
+            textOutput.select();
+            document.execCommand('copy');
+            showNotification('Text copied to clipboard!');
+        });
+        
+        // Base64 Tools
+        const base64Action = document.getElementById('base64-action');
+        const base64Input = document.getElementById('base64-input');
+        const base64Output = document.getElementById('base64-output');
+        const processBase64Btn = document.getElementById('process-base64');
+        const copyBase64Btn = document.getElementById('copy-base64');
+        
+        processBase64Btn.addEventListener('click', () => {
+            const action = base64Action.value;
+            const input = base64Input.value;
+            
+            if (!input) {
+                showNotification('Please enter some text', false);
+                return;
+            }
+            
+            try {
+                if (action === 'encode') {
+                    base64Output.value = btoa(unescape(encodeURIComponent(input)));
+                } else {
+                    base64Output.value = decodeURIComponent(escape(atob(input)));
+                }
+                showNotification(`Base64 ${action === 'encode' ? 'encoded' : 'decoded'} successfully!`);
+            } catch (e) {
+                showNotification('Error: Invalid input for decoding', false);
+                base64Output.value = '';
+            }
+        });
+        
+        copyBase64Btn.addEventListener('click', () => {
+            base64Output.select();
+            document.execCommand('copy');
+            showNotification('Result copied to clipboard!');
+        });
+        
+        // Initialize text processing
+        textInput.addEventListener('input', () => {
+            textOutput.value = textInput.value;
+        });
+    </script>
+</body>
+</html>
